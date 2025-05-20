@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2021-10-12T04:01:43Z</date>
+    <groups>
+        <group>
+            <name>Linux servers</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template MySQL Status</template>
+            <name>Template MySQL Status</name>
+            <groups>
+                <group>
+                    <name>Linux servers</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>MySQL_Status</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>MySQL 流入的总流量 Bytes_received</name>
+                    <key>mysql.status[Bytes_received]</key>
+                    <applications>
+                        <application>
+                            <name>MySQL_Status</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>MySQL 流出的总流量 Bytes_sent</name>
+                    <key>mysql.status[Bytes_sent]</key>
+                    <applications>
+                        <application>
+                            <name>MySQL_Status</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>MySQL 删除的总量 Com_delete</name>
+                    <key>mysql.status[Com_delete]</key>
+                    <applications>
+                        <application>
+                            <name>MySQL_Status</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>MySQL 插入的总量 Com_insert</name>
+                    <key>mysql.status[Com_insert]</key>
+                    <applications>
+                        <application>
+                            <name>MySQL_Status</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>MySQL 查询的总量 Com_select</name>
+                    <key>mysql.status[Com_select]</key>
+                    <applications>
+                        <application>
+                            <name>MySQL_Status</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>MySQL 更新的总量 Com_update</name>
+                    <key>mysql.status[Com_update]</key>
+                    <applications>
+                        <application>
+                            <name>MySQL_Status</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>MySQL 慢查询的总量 Slow_queries</name>
+                    <key>mysql.status[Slow_queries]</key>
+                    <applications>
+                        <application>
+                            <name>MySQL_Status</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>MySQL 线程连接数 Threads_connected</name>
+                    <key>mysql.status[Threads_connected]</key>
+                    <applications>
+                        <application>
+                            <name>MySQL_Status</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(5m)}&gt;{$MYSQL_CONN.MAX}</expression>
+                            <name>MySQL 连接数持续5分钟 {$MYSQL_CONN.MAX}</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+            </items>
+            <macros>
+                <macro>
+                    <macro>{$MYSQL_CONN.MAX}</macro>
+                    <value>200</value>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+    <graphs>
+        <graph>
+            <name>MySQL Connected</name>
+            <graph_items>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <color>1A7C11</color>
+                    <item>
+                        <host>Template MySQL Status</host>
+                        <key>mysql.status[Threads_connected]</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>MySQL Status</name>
+            <graph_items>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <color>1A7C11</color>
+                    <item>
+                        <host>Template MySQL Status</host>
+                        <key>mysql.status[Com_delete]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>2</sortorder>
+                    <color>F63100</color>
+                    <item>
+                        <host>Template MySQL Status</host>
+                        <key>mysql.status[Slow_queries]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>3</sortorder>
+                    <color>2774A4</color>
+                    <item>
+                        <host>Template MySQL Status</host>
+                        <key>mysql.status[Com_insert]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>4</sortorder>
+                    <color>A54F10</color>
+                    <item>
+                        <host>Template MySQL Status</host>
+                        <key>mysql.status[Com_update]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>5</sortorder>
+                    <color>FC6EA3</color>
+                    <item>
+                        <host>Template MySQL Status</host>
+                        <key>mysql.status[Com_select]</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>MySQL 流量图</name>
+            <graph_items>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <color>1A7C11</color>
+                    <item>
+                        <host>Template MySQL Status</host>
+                        <key>mysql.status[Bytes_received]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>2</sortorder>
+                    <color>F63100</color>
+                    <item>
+                        <host>Template MySQL Status</host>
+                        <key>mysql.status[Bytes_sent]</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+    </graphs>
+</zabbix_export>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2021-10-12T04:02:02Z</date>
+    <groups>
+        <group>
+            <name>Linux servers</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template MySQL Slave Status</template>
+            <name>Template MySQL Slave Status</name>
+            <groups>
+                <group>
+                    <name>Linux servers</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>MySQL_SLave</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>MySQL Slave 延迟</name>
+                    <key>mysql.slave.status[Seconds_Behind_Master]</key>
+                    <delay>10s</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>MySQL_SLave</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>MySQL Slave IO线程</name>
+                    <key>mysql.slave.status[Slave_IO_Running]</key>
+                    <delay>10s</delay>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <applications>
+                        <application>
+                            <name>MySQL_SLave</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>MySQL Slave SQL线程</name>
+                    <key>mysql.slave.status[Slave_SQL_Running]</key>
+                    <delay>10s</delay>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <applications>
+                        <application>
+                            <name>MySQL_SLave</name>
+                        </application>
+                    </applications>
+                </item>
+            </items>
+        </template>
+    </templates>
+    <triggers>
+        <trigger>
+            <expression>{Template MySQL Slave Status:mysql.slave.status[Slave_IO_Running].str(Yes)}=0 or {Template MySQL Slave Status:mysql.slave.status[Slave_SQL_Running].str(Yes)}=0</expression>
+            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+            <recovery_expression>{Template MySQL Slave Status:mysql.slave.status[Slave_IO_Running].str(Yes)}=1 and {Template MySQL Slave Status:mysql.slave.status[Slave_SQL_Running].str(Yes)}=1</recovery_expression>
+            <name>MySQL SQL线程或IO线程异常</name>
+            <priority>HIGH</priority>
+        </trigger>
+    </triggers>
+</zabbix_export>
