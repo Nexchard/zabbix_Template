@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2021-10-11T09:03:55Z</date>
+    <groups>
+        <group>
+            <name>Linux servers</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template PHP-FPM Status</template>
+            <name>Template PHP-FPM Status</name>
+            <groups>
+                <group>
+                    <name>Linux servers</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>php_fpm</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>fpm 获取的连接数 accepted_conn</name>
+                    <key>fpm.status[accepted_conn]</key>
+                    <applications>
+                        <application>
+                            <name>php_fpm</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>fpm 获取进程数 active_processes</name>
+                    <key>fpm.status[active_processes]</key>
+                    <applications>
+                        <application>
+                            <name>php_fpm</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>fpm 空闲进程数 idle_processes</name>
+                    <key>fpm.status[idle_processes]</key>
+                    <applications>
+                        <application>
+                            <name>php_fpm</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>fpm 连接队列 listen_queue</name>
+                    <key>fpm.status[listen_queue]</key>
+                    <applications>
+                        <application>
+                            <name>php_fpm</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>fpm 最大的活跃进程数 max_active_processes</name>
+                    <key>fpm.status[max_active_processes]</key>
+                    <applications>
+                        <application>
+                            <name>php_fpm</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>fpm 超过进程峰值次数 max_children_reached</name>
+                    <key>fpm.status[max_children_reached]</key>
+                    <applications>
+                        <application>
+                            <name>php_fpm</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>fpm 连接最大的队列 max_listen_queue</name>
+                    <key>fpm.status[max_listen_queue]</key>
+                    <applications>
+                        <application>
+                            <name>php_fpm</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>fpm 总的进程数 total_processes</name>
+                    <key>fpm.status[total_processes]</key>
+                    <applications>
+                        <application>
+                            <name>php_fpm</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>fpm Process RUNNING</name>
+                    <key>net.tcp.listen[9000]</key>
+                    <applications>
+                        <application>
+                            <name>php_fpm</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}=0</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{last()}=1</recovery_expression>
+                            <name>Fpm Process Is Not Runing</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+            </items>
+            <macros>
+                <macro>
+                    <macro>{$MAX_CHILDREN}</macro>
+                    <value>5</value>
+                </macro>
+                <macro>
+                    <macro>{$MAX_LISTEN_QUEUE}</macro>
+                    <value>50</value>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+    <triggers>
+        <trigger>
+            <expression>{Template PHP-FPM Status:fpm.status[listen_queue].min(2m)}&gt;={$MAX_LISTEN_QUEUE} and {Template PHP-FPM Status:fpm.status[max_children_reached].last()}&gt;{$MAX_CHILDREN}</expression>
+            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+            <recovery_expression>{Template PHP-FPM Status:fpm.status[listen_queue].last()}=0</recovery_expression>
+            <name>Fpm Process Max Listen Queue High {$MAX_LISTEN_QUEUE}</name>
+            <priority>AVERAGE</priority>
+        </trigger>
+    </triggers>
+    <graphs>
+        <graph>
+            <name>fpm status 进程</name>
+            <graph_items>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <color>1A7C11</color>
+                    <item>
+                        <host>Template PHP-FPM Status</host>
+                        <key>fpm.status[total_processes]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>2</sortorder>
+                    <color>F63100</color>
+                    <item>
+                        <host>Template PHP-FPM Status</host>
+                        <key>fpm.status[max_active_processes]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>3</sortorder>
+                    <color>2774A4</color>
+                    <item>
+                        <host>Template PHP-FPM Status</host>
+                        <key>fpm.status[idle_processes]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>4</sortorder>
+                    <color>A54F10</color>
+                    <item>
+                        <host>Template PHP-FPM Status</host>
+                        <key>fpm.status[active_processes]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>5</sortorder>
+                    <color>FC6EA3</color>
+                    <item>
+                        <host>Template PHP-FPM Status</host>
+                        <key>fpm.status[max_children_reached]</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>fpm status 队列</name>
+            <graph_items>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <color>1A7C11</color>
+                    <item>
+                        <host>Template PHP-FPM Status</host>
+                        <key>fpm.status[accepted_conn]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>2</sortorder>
+                    <color>F63100</color>
+                    <item>
+                        <host>Template PHP-FPM Status</host>
+                        <key>fpm.status[max_listen_queue]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>3</sortorder>
+                    <color>2774A4</color>
+                    <item>
+                        <host>Template PHP-FPM Status</host>
+                        <key>fpm.status[listen_queue]</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+    </graphs>
+</zabbix_export>
