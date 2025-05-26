@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>7.2</version>
+    <template_groups>
+        <template_group>
+            <uuid>7df96b18c230490a9a0a9e2307226338</uuid>
+            <name>Templates</name>
+        </template_group>
+    </template_groups>
+    <templates>
+        <template>
+            <uuid>5608f6c2d5214a2f94a36c0b89b6c89b</uuid>
+            <template>Redis Status</template>
+            <name>Redis Status</name>
+            <groups>
+                <group>
+                    <name>Templates</name>
+                </group>
+            </groups>
+            <items>
+                <item>
+                    <uuid>df76be8ef0c34cba98871a9066205649</uuid>
+                    <name>redis当前的客户端连接数</name>
+                    <key>redis.status[connected_clients]</key>
+                    <delay>10s</delay>
+                    <tags>
+                        <tag>
+                            <tag>type</tag>
+                            <value>redis</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>0c3040bfb615495f98d1883295f7a52e</uuid>
+                    <name>redis最大支持的客户端连接数</name>
+                    <key>redis.status[maxclients]</key>
+                    <delay>10s</delay>
+                    <tags>
+                        <tag>
+                            <tag>type</tag>
+                            <value>redis</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>81fd4758a49642a59dd0628e82b99153</uuid>
+                    <name>redis最大支持的内存</name>
+                    <key>redis.status[maxmemory]</key>
+                    <delay>10s</delay>
+                    <units>B</units>
+                    <tags>
+                        <tag>
+                            <tag>type</tag>
+                            <value>redis</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>ab59e2f681344bab9b9539a0ed036a9a</uuid>
+                    <name>redis已使用的内存</name>
+                    <key>redis.status[used_memory]</key>
+                    <delay>10s</delay>
+                    <units>B</units>
+                    <tags>
+                        <tag>
+                            <tag>type</tag>
+                            <value>redis</value>
+                        </tag>
+                    </tags>
+                </item>
+            </items>
+            <macros>
+                <macro>
+                    <macro>{$REDIS.CLIENT.MAX}</macro>
+                    <value>60</value>
+                </macro>
+                <macro>
+                    <macro>{$REDIS.CLIENT.MIN}</macro>
+                    <value>40</value>
+                </macro>
+                <macro>
+                    <macro>{$REDIS.MEM.MAX}</macro>
+                    <value>80</value>
+                </macro>
+                <macro>
+                    <macro>{$REDIS.MEM.MIN}</macro>
+                    <value>60</value>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+    <triggers>
+        <trigger>
+            <uuid>9140d7a8a7df4e7f82d9a0ace0db1ca6</uuid>
+            <expression>last(/Redis Status/redis.status[used_memory]) /last(/Redis Status/redis.status[maxmemory])* 100 &gt; {$REDIS.MEM.MAX}</expression>
+            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+            <recovery_expression>last(/Redis Status/redis.status[used_memory]) / last(/Redis Status/redis.status[maxmemory]) * 100 &lt; {$REDIS.MEM.MIN}</recovery_expression>
+            <name>Redis已用内存超过{$REDIS.MEM.MAX} %</name>
+            <priority>HIGH</priority>
+        </trigger>
+        <trigger>
+            <uuid>3fb0b72228a747dbaa72f12efee3687b</uuid>
+            <expression>avg(/Redis Status/redis.status[connected_clients],5m) / last(/Redis Status/redis.status[maxclients])* 100 &gt; {$REDIS.CLIENT.MAX}</expression>
+            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+            <recovery_expression>avg(/Redis Status/redis.status[connected_clients],5m) / last(/Redis Status/redis.status[maxclients])* 100 &lt; {$REDIS.CLIENT.MIN}</recovery_expression>
+            <name>Redis的活跃连接数超过了{$REDIS.CLIENT.MAX}%</name>
+            <priority>HIGH</priority>
+        </trigger>
+    </triggers>
+</zabbix_export>
